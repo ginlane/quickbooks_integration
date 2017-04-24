@@ -73,7 +73,8 @@ module QBIntegration
 #           invoice.payment_method_id = payment_method_service.matching_payment.id
            customer_id = customer_service.find_or_create.id
            # invoice.customer_ref = Quickbooks::Model::EntityRef.new value: customer_id
-           invoice.customer_ref = customer_id
+           # invoice.customer_ref = customer_id
+           invoice.customer_id = customer_id
 # 
 #           # Associated as both DepositAccountRef and IncomeAccountRef
 #           #
