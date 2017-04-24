@@ -80,7 +80,6 @@ class QuickbooksEndpoint < EndpointBase::Sinatra::Base
   end
 
   get '/auth/callback' do
-    puts @config
     test = params.keys.map do |key|
       "#{key}: #{params[key]}"
     end.push("oauth_secret: [check logs for original auth request response]")
@@ -108,17 +107,6 @@ class QuickbooksEndpoint < EndpointBase::Sinatra::Base
       "token: #{access_token.token}",
       "secret: #{access_token.secret}"
     ].join("<br>")
-  end
-
-  post '/test' do
-    puts @config
-  end
-
-  post '/get-invoice' do
-    puts  'quickbooks_endpoint'
-    puts @config
-    i = QBIntegration::Order.new(@payload, @config).create
-    puts i
   end
 
   def lookup_error_message

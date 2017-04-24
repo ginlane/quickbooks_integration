@@ -7,8 +7,6 @@ module QBIntegration
     def initialize(payload = {}, config)
       @config = config
       @payload = payload
-      puts 'qb_integration/base'
-      puts @config
     end
 
     def invoice_service

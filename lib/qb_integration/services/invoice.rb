@@ -64,39 +64,23 @@ module QBIntegration
            invoice.doc_number = order_number
            invoice.billing_email_address = order["email"]
            invoice.total = order['totals']['order']
- 
+
            invoice.txn_date = order['placed_on']
-# 
+
            invoice.shipping_address = Address.build order["shipping_address"]
            invoice.billing_address = Address.build order["billing_address"]
-# 
-#           invoice.payment_method_id = payment_method_service.matching_payment.id
+
            customer_id = customer_service.find_or_create.id
-           # invoice.customer_ref = Quickbooks::Model::EntityRef.new value: customer_id
-           # invoice.customer_ref = customer_id
            invoice.customer_id = customer_id
-# 
-#           # Associated as both DepositAccountRef and IncomeAccountRef
-#           #
-#           # Quickbooks might return an weird error if the name here is already used
-#           # by other, I think, quickbooks account
+
+           # Associated as both DepositAccountRef and IncomeAccountRef
+           #
+           # Quickbooks might return an weird error if the name here is already used
+           # by other, I think, quickbooks account
            income_account = account_service.find_by_name config.fetch("quickbooks_account_name")
-# 
+
            # income_account = nil
            invoice.line_items = line_service.build_lines income_account
-# 
-#           # Default to Undeposit Funds account if no account is set
-#           #
-#           # Watch out for errors like:
-#           #
-#           #   A business validation error has occurred while processing your
-#           #   request: Business Validation Error: You need to select a different
-#           #   type of account for this transaction.
-#           #
-#           if config["quickbooks_deposit_to_account_name"].present?
-#             deposit_account = account_service.find_by_name config.fetch("quickbooks_deposit_to_account_name")
-#             invoice.deposit_to_account_id = deposit_account.id
-#           end
         end
 
         def shipments_tracking_number

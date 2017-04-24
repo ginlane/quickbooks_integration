@@ -8,8 +8,6 @@ module QBIntegration
       def initialize(model_name, config)
         @model_name = model_name
         @config = config
-        puts 'QBIntegration::Service::Base'
-        puts @config
         @quickbooks = create_service
       end
 

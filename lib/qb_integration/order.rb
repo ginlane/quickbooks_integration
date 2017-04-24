@@ -3,8 +3,6 @@ module QBIntegration
     attr_accessor :order
 
     def initialize(message = {}, config)
-      puts 'QBIntegration::Order'
-      puts config
       super(message, config)
       @order = payload[:order]
     end
