@@ -56,6 +56,11 @@ module QBIntegration
         quickbooks.update invoice
       end
 
+      def void(invoice)
+        build invoice
+        quickbooks.void invoice
+      end
+
       private
         def order_number
           order[:number] || order[:id]

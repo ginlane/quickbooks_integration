@@ -9,9 +9,9 @@ GIT
 
 GIT
   remote: git://github.com/ruckus/quickbooks-ruby.git
-  revision: 585812a9403d8cc2dabf332b24f5e22d148f7840
+  revision: f26dc6d35ee6d8ccf98c2b4f7dddcc8497816197
   specs:
-    quickbooks-ruby (0.4.2)
+    quickbooks-ruby (0.4.8)
       activemodel
       multipart-post
       nokogiri
@@ -21,17 +21,16 @@ GIT
 GEM
   remote: https://www.rubygems.org/
   specs:
-    activemodel (4.2.5)
-      activesupport (= 4.2.5)
+    activemodel (4.2.8)
+      activesupport (= 4.2.8)
       builder (~> 3.1)
-    activesupport (4.2.5)
+    activesupport (4.2.8)
       i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.4.0)
-    builder (3.2.2)
+    builder (3.2.3)
     byebug (8.2.1)
     capistrano (3.4.0)
       i18n
@@ -63,27 +62,27 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     hashdiff (0.2.3)
     honeybadger (2.3.1)
-    i18n (0.7.0)
+    i18n (0.8.1)
     jbuilder (2.3.2)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
-    json (1.8.3)
+    json (1.8.6)
     kgio (2.10.0)
     listen (3.0.5)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     lumberjack (1.0.9)
     method_source (0.8.2)
-    mini_portile2 (2.0.0)
-    minitest (5.8.3)
+    mini_portile2 (2.1.0)
+    minitest (5.10.1)
     multi_json (1.11.2)
     multipart-post (2.0.0)
     nenv (0.2.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (3.0.1)
-    nokogiri (1.6.7)
-      mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.7.1)
+      mini_portile2 (~> 2.1.0)
     notiffany (0.0.8)
       nenv (~> 0.1)
       shellany (~> 0.0)
@@ -135,12 +134,12 @@ GEM
       net-ssh (>= 2.8.0)
     terminal-notifier-guard (1.6.4)
     thor (0.19.1)
-    thread_safe (0.3.5)
+    thread_safe (0.3.6)
     tilt (1.4.1)
     tilt-jbuilder (0.7.0)
       jbuilder
       tilt (>= 1.3.0, < 3)
-    tzinfo (1.2.2)
+    tzinfo (1.2.3)
       thread_safe (~> 0.1)
     unicorn (5.0.1)
       kgio (~> 2.6)

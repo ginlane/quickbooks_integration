@@ -43,9 +43,17 @@ module QBIntegration
         raise RecordNotFound.new "Quickbooks Invoice not found for order #{order[:number]}"
       end
 
-      credit_memo = credit_memo_service.create_from_receipt invoice
-      text = "Created Quickbooks Credit Memo #{credit_memo.id} for canceled order #{invoice.doc_number}"
-      [200, text]
+      if invoice_service.void invoice
+        response = 200
+        text = "Voided Quickbooks Invoice #{invoice.doc_number}"
+      else
+        response = 500
+        text = "Failed to void Quickbooks Invoice #{invoice.doc_number}"
+      end
+
+#      credit_memo = credit_memo_service.create_from_receipt invoice
+#      text = "Created Quickbooks Credit Memo #{credit_memo.id} for canceled order #{invoice.doc_number}"
+      [response, text]
     end
   end
 end
