@@ -29,30 +29,31 @@ module QBIntegration
       end
 
       def create
-         invoice = create_model
-         build invoice
+        invoice = create_model
+        build invoice
 
-         begin
-         quickbooks.create invoice
-         rescue Exception => e
-           puts e.try :message
-           puts e.try :code
-           puts e.try :detail
-           puts e.try :type
-           puts e.try :request_xml
-           puts e.try :request_json
-           raise e
-         end
+        begin
+        quickbooks.create invoice
+        rescue Exception => e
+          puts e.try :message
+          puts e.try :code
+          puts e.try :detail
+          puts e.try :type
+          puts e.try :request_xml
+          puts e.try :request_json
+          raise e
+        end
       end
 
       def update(invoice)
-#         build invoice
-#         if order[:shipments] && !order[:shipments].empty?
-#           invoice.tracking_num = shipments_tracking_number.join(", ")
-#           invoice.ship_method_ref = order[:shipments].last[:shipping_method]
-#           invoice.ship_date = order[:shipments].last[:shipped_at]
-#         end
-#         quickbooks.update invoice
+        build invoice
+        shipments = order[:shipments]
+        if shipments && !shipments.empty?
+          invoice.tracking_num = shipments_tracking_number.join(", ")
+          invoice.ship_method_ref = shipments.last[:shipping_method]
+          invoice.ship_date = shipments.last[:shipped_at]
+        end
+        quickbooks.update invoice
       end
 
       private
@@ -75,18 +76,17 @@ module QBIntegration
 
            # Associated as both DepositAccountRef and IncomeAccountRef
            #
-           # Quickbooks might return an weird error if the name here is already used
+           # Quickbooks might return a weird error if the name here is already used
            # by other, I think, quickbooks account
            income_account = account_service.find_by_name config.fetch("quickbooks_account_name")
 
-           # income_account = nil
            invoice.line_items = line_service.build_lines income_account
         end
 
         def shipments_tracking_number
-#           order[:shipments].map do |shipment|
-#             shipment[:tracking]
-#           end
+           order[:shipments].map do |shipment|
+             shipment[:tracking]
+           end
         end
     end
   end
