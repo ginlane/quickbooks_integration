@@ -79,6 +79,48 @@ class QuickbooksEndpoint < EndpointBase::Sinatra::Base
     end
   end
 
+  get '/auth/callback' do
+    puts @config
+    test = params.keys.map do |key|
+      "#{key}: #{params[key]}"
+    end.push("oauth_secret: [check logs for original auth request response]")
+      .join('<br>')
+
+    puts test
+    return test
+  end
+
+  get '/auth' do
+    callback_url = ENV['CALLBACK_URL']
+    rt = QBIntegration::Auth.new().get_request_token callback_url
+    puts "secret: #{rt.secret}\ntoken: #{rt.token}"
+    redirect rt.authorize_url(:oauth_callback => callback_url)
+  end
+
+  get '/auth/get_access_token' do
+    token = params[:token]
+    secret = params[:secret]
+    oauth_verifier = params[:oauth_verifier]
+
+    access_token = QBIntegration::Auth.new().get_access_from_request(token, secret, oauth_verifier)
+
+    [
+      "token: #{access_token.token}",
+      "secret: #{access_token.secret}"
+    ].join("<br>")
+  end
+
+  post '/test' do
+    puts @config
+  end
+
+  post '/get-invoice' do
+    puts  'quickbooks_endpoint'
+    puts @config
+    i = QBIntegration::Order.new(@payload, @config).create
+    puts i
+  end
+
   def lookup_error_message
     case env['sinatra.error'].class.to_s
     when "Quickbooks::AuthorizationFailure"

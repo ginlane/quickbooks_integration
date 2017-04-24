@@ -3,43 +3,49 @@ module QBIntegration
     attr_accessor :order
 
     def initialize(message = {}, config)
-      super
+      puts 'QBIntegration::Order'
+      puts config
+      super(message, config)
       @order = payload[:order]
     end
 
+    def find(id)
+      invoice_service.find id
+    end
+
     def create
-      if sales_receipt = sales_receipt_service.find_by_order_number
+      if invoice = invoice_service.find_by_order_number
         raise AlreadyPersistedOrderException.new(
-          "Order #{order[:id]} already has a sales receipt with id: #{sales_receipt.id}"
+          "Order #{order[:id]} already has a sales receipt with id: #{invoice.id}"
         )
       end
 
-      sales_receipt = sales_receipt_service.create
-      text = "Created Quickbooks Sales Receipt #{sales_receipt.id} for order #{sales_receipt.doc_number}"
+      invoice = invoice_service.create
+      text = "Created Quickbooks Sales Receipt #{invoice.id} for order #{invoice.doc_number}"
       [200, text]
     end
 
     def update
-      sales_receipt = sales_receipt_service.find_by_order_number
+      invoice = invoice_service.find_by_order_number
 
-      if !sales_receipt.present? && config[:quickbooks_create_or_update].to_s == "1"
-        sales_receipt = sales_receipt_service.create
-        [200, "Created Quickbooks Sales Receipt #{sales_receipt.doc_number}"]
-      elsif !sales_receipt.present?
+      if !invoice.present? && config[:quickbooks_create_or_update].to_s == "1"
+        invoice = invoice_service.create
+        [200, "Created Quickbooks Sales Receipt #{invoice.doc_number}"]
+      elsif !invoice.present?
         raise RecordNotFound.new "Quickbooks Sales Receipt not found for order #{order[:number]}"
       else
-        sales_receipt = sales_receipt_service.update sales_receipt
-        [200, "Updated Quickbooks Sales Receipt #{sales_receipt.doc_number}"]
+        invoice = invoice_service.update invoice
+        [200, "Updated Quickbooks Sales Receipt #{invoice.doc_number}"]
       end
     end
 
     def cancel
-      unless sales_receipt = sales_receipt_service.find_by_order_number
+      unless invoice = invoice_service.find_by_order_number
         raise RecordNotFound.new "Quickbooks Sales Receipt not found for order #{order[:number]}"
       end
 
-      credit_memo = credit_memo_service.create_from_receipt sales_receipt
-      text = "Created Quickbooks Credit Memo #{credit_memo.id} for canceled order #{sales_receipt.doc_number}"
+      credit_memo = credit_memo_service.create_from_receipt invoice
+      text = "Created Quickbooks Credit Memo #{credit_memo.id} for canceled order #{invoice.doc_number}"
       [200, text]
     end
   end

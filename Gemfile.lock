@@ -1,4 +1,13 @@
 GIT
+  remote: git://github.com/flowlink/endpoint_base.git
+  revision: b3c06ec88b6cfcd9bea165def5f0592a0707730e
+  specs:
+    endpoint_base (0.3)
+      activesupport
+      jbuilder
+      json
+
+GIT
   remote: git://github.com/ruckus/quickbooks-ruby.git
   revision: 585812a9403d8cc2dabf332b24f5e22d148f7840
   specs:
@@ -8,15 +17,6 @@ GIT
       nokogiri
       oauth (= 0.4.7)
       roxml (= 3.3.1)
-
-GIT
-  remote: git://github.com/spree/endpoint_base.git
-  revision: b3077af5b54ba18ed47bdbef01395b0027ad6637
-  specs:
-    endpoint_base (0.3)
-      activesupport
-      jbuilder
-      json
 
 GEM
   remote: https://www.rubygems.org/
@@ -180,4 +180,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.11.0
+   1.13.1
