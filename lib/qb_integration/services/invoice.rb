@@ -2,7 +2,7 @@ module QBIntegration
   module Service
     class Invoice < Base
       attr_reader :order, :payload
-      attr_reader :payment_method_service, :line_service, :account_service, :customer_service
+      attr_reader :payment_method_service, :line_service, :account_service, :customer_service, :payment_service
 
       def initialize(config, payload, options = { dependencies: true })
         super("Invoice", config)
@@ -14,13 +14,8 @@ module QBIntegration
           @customer_service = Customer.new config, payload
           @account_service = Account.new config
           @line_service = Line.new config, payload
+          @payment_service = Payment.new config, payload
         end
-      end
-
-      def find(id)
-        # quickbooks.fetch_by_id "#{id}"
-        query = "SELECT * FROM Invoice WHERE DocNumber = '#{id}'"
-        quickbooks.query(query).entries.first
       end
 
       def find_by_order_number
@@ -33,7 +28,12 @@ module QBIntegration
         build invoice
 
         begin
-        quickbooks.create invoice
+        qb_invoice = quickbooks.create invoice
+
+        create_or_update_payments_for_invoice(qb_invoice.id)
+
+        qb_invoice
+
         rescue Exception => e
           puts e.try :message
           puts e.try :code
@@ -53,7 +53,11 @@ module QBIntegration
           invoice.ship_method_ref = shipments.last[:shipping_method]
           invoice.ship_date = shipments.last[:shipped_at]
         end
-        quickbooks.update invoice
+        qb_invoice = quickbooks.update invoice
+
+        create_or_update_payments_for_invoice(qb_invoice.id)
+
+        qb_invoice
       end
 
       def void(invoice)
@@ -67,31 +71,36 @@ module QBIntegration
         end
 
         def build(invoice)
-           invoice.doc_number = order_number
-           invoice.billing_email_address = order["email"]
-           invoice.total = order['totals']['order']
+          invoice.doc_number = order_number
+          invoice.billing_email_address = order["email"]
+          invoice.total = order['totals']['order']
 
-           invoice.txn_date = order['placed_on']
+          invoice.txn_date = order['placed_on']
 
-           invoice.shipping_address = Address.build order["shipping_address"]
-           invoice.billing_address = Address.build order["billing_address"]
+          invoice.shipping_address = Address.build order["shipping_address"]
+          invoice.billing_address = Address.build order["billing_address"]
 
-           customer_id = customer_service.find_or_create.id
-           invoice.customer_id = customer_id
+          customer_id = customer_service.find_or_create.id
+          invoice.customer_id = customer_id
 
-           # Associated as both DepositAccountRef and IncomeAccountRef
-           #
-           # Quickbooks might return a weird error if the name here is already used
-           # by other, I think, quickbooks account
-           income_account = account_service.find_by_name config.fetch("quickbooks_account_name")
+          #
+          # Associated as both DepositAccountRef and IncomeAccountRef
+          #
+          # Quickbooks might return a weird error if the name here is already used
+          # by other, I think, quickbooks account
+          income_account = account_service.find_by_name config.fetch("quickbooks_account_name")
 
-           invoice.line_items = line_service.build_lines income_account
+          invoice.line_items = line_service.build_lines income_account
         end
 
         def shipments_tracking_number
            order[:shipments].map do |shipment|
              shipment[:tracking]
            end
+        end
+
+        def create_or_update_payments_for_invoice(invoice_id)
+          payment_service.create_or_update_for_invoice(invoice_id)
         end
     end
   end
