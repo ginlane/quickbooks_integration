@@ -37,8 +37,9 @@ module QBIntegration
       end
     end
 
+    # Voids an existing invoice as well as the payment associated to it, if any exist
+    # NOTE: may want to modify this to create Credit Memo if the invoice has been paid
     def cancel
-      # TODO: confirm this change to invoice from sales receipt
       unless invoice = invoice_service.find_by_order_number
         raise RecordNotFound.new "Quickbooks Invoice not found for order #{order[:number]}"
       end
@@ -51,8 +52,9 @@ module QBIntegration
         text = "Failed to void Quickbooks Invoice #{invoice.doc_number}"
       end
 
-#      credit_memo = credit_memo_service.create_from_receipt invoice
-#      text = "Created Quickbooks Credit Memo #{credit_memo.id} for canceled order #{invoice.doc_number}"
+      # credit_memo = credit_memo_service.create_from_receipt invoice
+      # text = "Created Quickbooks Credit Memo #{credit_memo.id} for canceled order #{invoice.doc_number}" 
+
       [response, text]
     end
   end
