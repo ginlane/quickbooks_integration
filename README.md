@@ -10,7 +10,7 @@ for further info on how to connect this integration.
 This is a fully hosted and supported integration for use with the [FlowLink](http://flowlink.io/)
 product. With this integration you can perform the following functions:
 
-* Send orders to Quickbooks as Sales Receipts
+* Send orders to Quickbooks as Invoices
 * Send products to Quickbooks as Items
 * Send returns to Quickbooks as Credit Memo
 * Poll for inventory stock levels in Quickbooks
@@ -37,16 +37,39 @@ Copy "sample.env" to ".env" and fill out the following variables:
 
 `QB_CONSUMER_KEY` - OAuth token
 
+`CALLBACK_URL` - the URL to use for authorization callback
+
 # Starting Application
 
 `bundle exec unicorn` -- Starts application on port 8080
 
-# About FlowLink
+# Getting OAuth on Local
 
-[FlowLink](http://flowlink.io/) allows you to connect to your own custom integrations.
-Feel free to modify the source code and host your own version of the integration
-or better yet, help to make the official integration better by submitting a pull request!
+1. Log in to your Quickbooks account
+1. Start ngrok to enable external access
+   `ngrok http 8080`
+1. Set consumer key, secret, and callback url (using ngrok as host) in .env (source it if necessary)
+1. Spin up server
+    `PORT=8080 foreman run web`
+1. GET /auth to authorize app and get request token
+1. Go through QB auth flow until you've been redirected to the callback url
+1. Make note of the token, verifier, and realm in the response
+1. Check in server logs (console output) for the request secret
+1. GET /auth/get_access_token?token=XXX&secret=XXX&oauth_verifier=XXX with values set to get access token
+1. Token and Secret will appear the response
+1. Use token, secret, and realm in future post bodies like so:
 
-This integration is 100% open source an licensed under the terms of the New BSD License.
+body:
 
-![FlowLink Logo](http://flowlink.io/wp-content/uploads/logo-1.png)
+```
+{
+  "parameters": {
+    "quickbooks_access_token": "...",
+    "quickbooks_access_secret": "...",
+    "quickbooks_realm": "...",
+    "quickbooks_account_name": "Sales of Product Income"
+  },
+  "order_or_other_payload_name": {
+    ...
+  }
+}
