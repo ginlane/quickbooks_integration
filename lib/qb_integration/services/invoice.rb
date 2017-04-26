@@ -61,7 +61,7 @@ module QBIntegration
       end
 
       def void(invoice)
-        build invoice
+        invoice = find_by_order_number
         quickbooks.void invoice
       end
 
