@@ -9,6 +9,14 @@ module QBIntegration
       @payload = payload
     end
 
+    def invoice_service
+      @invoice_service ||= Service::Invoice.new(@config, @payload)
+    end
+
+    def invoice_item_service
+      @invoice_item_service ||= Service::InvoiceItem.new(@config)
+    end
+
     def item_service
       @item_service ||= Service::Item.new(@config)
     end
