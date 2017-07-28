@@ -44,6 +44,19 @@ class QuickbooksEndpoint < EndpointBase::Sinatra::Base
     end
   end
 
+  ##
+  # Updates an order in quickbooks as well as its dependencies
+  #
+  # = payload
+  #   +order+ - the order to update in quickbooks
+  #   +parameters+ - hash of configuration options
+  #     +parameters.quickbooks_create_or_update+ - +1+ to create invoices if new
+  #     +parameters.quickbooks_account_name+ - the name in quickbooks of the account to
+  #       for the income
+  #     +parameters.quickbooks_payment_method_name+ - an array with a single hash,
+  #       mapping the name of the payment methed of orders to the name of the payment
+  #       method in quickbooks.
+  #       eg. +[{ "Cash on Delivery": "Cash", "Stripe": "Credit Card" }]+
   post '/update_order' do
     code, summary = QBIntegration::Order.new(@payload, @config).update
     result code, summary
